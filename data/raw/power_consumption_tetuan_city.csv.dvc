@@ -1,0 +1,5 @@
+outs:
+- md5: 755028da82bd51c1e46616e1ea56eb90
+  size: 4237942
+  hash: md5
+  path: power_consumption_tetuan_city.csv
