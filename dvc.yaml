@@ -1,0 +1,78 @@
+stages:
+
+  preprocess:
+    cmd: python src/preprocess.py
+    deps:
+      - src/preprocess.py
+      - data/raw/power_consumption_tetuan_city.csv
+    outs:
+      - artifacts/data/x_train.npy
+      - artifacts/data/x_test.npy
+      - artifacts/data/y_train.npy
+      - artifacts/data/y_test.npy
+
+  model:
+    cmd: python src/model.py
+    deps:
+      - src/model.py
+      - params.yaml
+      - artifacts/data/x_train.npy
+      - artifacts/data/x_test.npy
+      - artifacts/data/y_train.npy
+      - artifacts/data/y_test.npy
+    params:
+      - data.random_seed
+      - data.test_size
+      - model.epochs
+      - model.batch_size
+      - model.learning_rate
+      - model.random_forest
+      - model.mlp
+      - model.lstm
+      - callbacks
+    outs:
+      - artifacts/models/rf_model.pkl
+      - artifacts/models/mlp_model.pkl
+      - artifacts/models/lstm_model.keras
+      - artifacts/metrics/model_scores.json
+      - artifacts/training_history.json
+      - artifacts/data/x_train_seq.npy
+      - artifacts/data/x_test_seq.npy
+      - artifacts/data/y_train_seq.npy
+      - artifacts/data/y_test_seq.npy
+
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+      - src/evaluate.py
+      - artifacts/metrics/model_scores.json
+      - artifacts/models/rf_model.pkl
+      - artifacts/models/mlp_model.pkl
+      - artifacts/models/lstm_model.keras
+      - artifacts/data/x_test.npy
+      - artifacts/data/y_test.npy
+      - artifacts/data/x_test_seq.npy
+      - artifacts/data/y_test_seq.npy
+    outs:
+      - artifacts/metrics/best_model.json
+      - reports/plots
+
+  monitor:
+    cmd: python src/monitor.py
+    deps:
+      - src/monitor.py
+      - params.yaml
+      - artifacts/metrics/best_model.json
+      - artifacts/models/rf_model.pkl
+      - artifacts/models/mlp_model.pkl
+      - artifacts/models/lstm_model.keras
+      - artifacts/data/x_train.npy
+      - artifacts/data/x_test.npy
+      - artifacts/data/y_test.npy
+      - artifacts/data/x_train_seq.npy
+      - artifacts/data/x_test_seq.npy
+      - artifacts/data/y_test_seq.npy
+    params:
+      - monitor
+    outs:
+      - reports/monitoring_report.json

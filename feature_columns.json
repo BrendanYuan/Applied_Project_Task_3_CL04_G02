@@ -1,0 +1,21 @@
+{
+  "feature_columns": [
+    "Temperature",
+    "Humidity",
+    "Wind Speed",
+    "general diffuse flows",
+    "diffuse flows",
+    "hour_of_day",
+    "day_of_week",
+    "month",
+    "is_weekend"
+  ],
+  "target_column": "Zone 1 Power Consumption",
+  "engineered_features": {
+    "hour_of_day": "Extracted from DateTime — hour (0-23)",
+    "day_of_week": "Extracted from DateTime — day (0=Monday, 6=Sunday)",
+    "month": "Extracted from DateTime — month (1-12)",
+    "is_weekend": "Derived from day_of_week — 1 if Saturday or Sunday, else 0"
+  },
+  "notes": "Feature order here must match the order used in preprocess.py. Any inference or monitoring script loading raw data must apply features in this exact order before passing to the scaler."
+}
