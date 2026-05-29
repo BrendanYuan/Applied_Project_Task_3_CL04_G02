@@ -28,7 +28,7 @@ jobs:
       - name: Set up Python 3.11.9
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11.9'
+          python-version: '3.12' # 3.11.9 for Brendan
 
       # ── Cache pip dependencies ─────────────────────────────────
       - name: Cache pip dependencies

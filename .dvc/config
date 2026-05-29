@@ -1,0 +1,4 @@
+[core]
+    remote = origin
+['remote "origin"']
+    url = https://dagshub.com/JamieRanzolin/Practice-APT03_Brendan.dvc
