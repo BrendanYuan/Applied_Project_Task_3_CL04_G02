@@ -28,7 +28,7 @@ jobs:
       - name: Set up Python 3.11.9
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12' # 3.11.9 for Brendan
+          python-version: '3.11.9'
 
       # ── Cache pip dependencies ─────────────────────────────────
       - name: Cache pip dependencies
@@ -88,10 +88,10 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}
-          git add dvc.lock metrics.json
+       
           git diff --staged --quiet || git commit -m "update dvc.lock and metrics [skip ci]"
           git push
-
+      # git add dvc.lock metrics.json // removed for test
       # ── Upload artifacts for download from Actions UI ──────────────────────────────────
       - name: Upload trained models
         uses: actions/upload-artifact@v4
