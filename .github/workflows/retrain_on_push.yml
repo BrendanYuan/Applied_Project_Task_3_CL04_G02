@@ -112,6 +112,7 @@ jobs:
             artifacts/metrics/model_scores.json
             artifacts/metrics/best_model.json
             reports/monitoring_report.json
+            reports/plots/
           retention-days: 30
 
       # ── Post metrics as PR comment ─────────────────────────────
