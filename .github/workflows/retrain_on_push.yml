@@ -112,6 +112,9 @@ jobs:
             artifacts/metrics/model_scores.json
             artifacts/metrics/best_model.json
             reports/monitoring_report.json
+            artifacts/models/rf_model.pkl
+            artifacts/models/mlp_model.pkl
+            artifacts/models/lstm_model.keras
           retention-days: 30
 
       # ── Post metrics as PR comment ─────────────────────────────
