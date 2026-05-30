@@ -31,7 +31,7 @@ y_test  = np.load("artifacts/data/y_test.npy")
 results = {}
 
 # ==========================================
-# Random Forest
+# Random Forest Regressor
 # ==========================================
 print("=" * 50)
 print("Training: Random Forest")
@@ -59,7 +59,7 @@ pickle.dump(rf, open("artifacts/models/rf_model.pkl", "wb"))
 print(f"  R2: {results['rf']['r2']:.4f}  |  RMSE: {results['rf']['rmse']:.4f}")
 
 # ==========================================
-# MLP
+# MLP Regressor
 # ==========================================
 print("=" * 50)
 print("Training: MLP")

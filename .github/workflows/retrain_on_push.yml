@@ -3,10 +3,8 @@ name: MLOps Pipeline
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
   schedule:
-  - cron: "0 5 * * *"
+  - cron: "*/5 * * * *"
   workflow_dispatch:
     inputs:
       epochs:
