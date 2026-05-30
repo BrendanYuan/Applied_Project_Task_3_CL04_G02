@@ -18,7 +18,7 @@ with open("params.yaml") as f:
 monitor_cfg = params["monitor"]
 
 # ==========================================
-# Load best model info
+# Load best model info.
 # ==========================================
 with open("artifacts/metrics/best_model.json") as f:
     best_model_info = json.load(f)
