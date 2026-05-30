@@ -1,0 +1,7 @@
+{
+  "model": "rf",
+  "ks_p_value": 0.24786160336005392,
+  "rmse": 0.15535116030305518,
+  "drift_detected": false,
+  "performance_degraded": false
+}
