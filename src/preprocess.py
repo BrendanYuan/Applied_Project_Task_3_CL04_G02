@@ -39,18 +39,33 @@ def preprocess(df):
 
     y = df["Zone 1 Power Consumption"].values.reshape(-1, 1)
 
+    # scaler_X = StandardScaler()
+    # scaler_y = StandardScaler()
+
+    # X = scaler_X.fit_transform(X)
+    # y = scaler_y.fit_transform(y)
+
+    # X_train, X_test, y_train, y_test = train_test_split(
+    #     X,
+    #     y,
+    #     test_size=params["data"]["test_size"],
+    #     random_state=params["data"]["random_seed"]
+    # )
+    X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=params["data"]["test_size"],
+    random_state=params["data"]["random_seed"]
+    )
+
     scaler_X = StandardScaler()
     scaler_y = StandardScaler()
 
-    X = scaler_X.fit_transform(X)
-    y = scaler_y.fit_transform(y)
+    X_train = scaler_X.fit_transform(X_train)
+    X_test = scaler_X.transform(X_test)
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X,
-        y,
-        test_size=params["data"]["test_size"],
-        random_state=params["data"]["random_seed"]
-    )
+    y_train = scaler_y.fit_transform(y_train)
+    y_test = scaler_y.transform(y_test)
 
     np.save("artifacts/data/x_train.npy", X_train)
     np.save("artifacts/data/x_test.npy", X_test)
