@@ -93,15 +93,15 @@ jobs:
           git push
       # git add dvc.lock metrics.json // removed for test
       # ── Upload artifacts for download from Actions UI ──────────────────────────────────
-      # - name: Upload trained models
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: trained-models
-      #     path: |
-      #       artifacts/models/mlp_model.pkl
-      #       artifacts/models/rf_model.pkl
-      #       artifacts/models/lstm_model.keras
-      #     retention-days: 30
+      - name: Upload trained models
+        uses: actions/upload-artifact@v4
+        with:
+          name: trained-models
+          path: |
+            artifacts/models/mlp_model.pkl
+            artifacts/models/rf_model.pkl
+            artifacts/models/lstm_model.keras
+          retention-days: 30
 
       # ── Upload artifacts for download from Actions UI ─────────────────────────────────────────
       - name: Upload results
