@@ -1,10 +1,21 @@
+# MLOps CI/CD Pipeline using GitHub Actions
+# This workflow defines an automated machine learning pipeline that is triggered on:
+# - push events to the main branch
+# - scheduled execution (weekly cron job)
+# - manual execution via workflow_dispatch
+
 name: MLOps Pipeline
 
 on:
+  # Push trigger 
   push:
     branches: [ main ]
+
+  # Scheduled trigger for automated retraining (runs weekly at midnight UTC)
   schedule:
     - cron: "0 0 * * 0"
+
+  # Manual trigger allowing users to specify training hyperparameters  
   workflow_dispatch:
     inputs:
       epochs:
@@ -88,10 +99,10 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}
-       
+          git add dvc.lock metrics.json
           git diff --staged --quiet || git commit -m "update dvc.lock and metrics [skip ci]"
           git push
-      # git add dvc.lock metrics.json // removed for test
+          
       # ── Upload artifacts for download from Actions UI ──────────────────────────────────
       - name: Upload trained models
         uses: actions/upload-artifact@v4
