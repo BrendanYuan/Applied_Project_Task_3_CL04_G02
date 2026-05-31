@@ -2,7 +2,6 @@ data:
   train_split: 0.7 # Proportion of data used for training
   test_size: 0.3 # Proportion of data used for testing
   random_seed: 42 # Ensures reproducibility of dataset splitting
-  sequence_length: 10
 
 model:
   epochs: 50 # Number of training epochs for deep learning models
@@ -20,19 +19,19 @@ model:
     min_samples_leaf: 1 # Minimum samples required to split a node
 
   lstm:
-    sequence_length: 24
-    units_1: 64
-    units_2: 32
-    dense_units: 16
-    dropout_1: 0.3
-    dropout_2: 0.3
+    sequence_length: 24 # Input sequence length for LSTM model
+    units_1: 64 # Number of units in first LSTM layer
+    units_2: 32 # Number of units in second LSTM layer
+    dense_units: 16 # Fully connected layer size
+    dropout_1: 0.3 # Dropout rate for first LSTM layer
+    dropout_2: 0.3 # Dropout rate for first LSTM layer
 
 callbacks:
-  early_stopping_patience: 10
-  reduce_lr_patience: 5
-  reduce_lr_factor: 0.5
-  reduce_lr_min_lr: 0.000001
+  early_stopping_patience: 10 # Stops training if validation loss does not improve
+  reduce_lr_patience: 5 # Reduces learning rate after plateau in validation loss
+  reduce_lr_factor: 0.5 # Factor by which learning rate is reduced
+  reduce_lr_min_lr: 0.000001 # Minimum learning rate allowed
 
 monitor:
-  ks_p_threshold: 0.05
-  rmse_drift_factor: 1.10
+  ks_p_threshold: 0.05 # Threshold for KS-test to detect distribution drift
+  rmse_drift_factor: 1.10 # Allowed RMSE increase factor before flagging degradation
