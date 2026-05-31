@@ -99,9 +99,9 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}
-          git add dvc.lock metrics.json
           git diff --staged --quiet || git commit -m "update dvc.lock and metrics [skip ci]"
           git push
+      # Excluding for now: git add dvc.lock metrics.json
           
       # ── Upload artifacts for download from Actions UI ──────────────────────────────────
       - name: Upload trained models

@@ -1,23 +1,23 @@
 data:
-  train_split: 0.7
-  test_size: 0.3
-  random_seed: 42
+  train_split: 0.7 # Proportion of data used for training
+  test_size: 0.3 # Proportion of data used for testing
+  random_seed: 42 # Ensures reproducibility of dataset splitting
   sequence_length: 10
 
 model:
-  epochs: 50
-  batch_size: 32
-  learning_rate: 0.001
+  epochs: 50 # Number of training epochs for deep learning models
+  batch_size: 32 # Number of samples per gradient update
+  learning_rate: 0.001 # Learning rate for optimisers
 
   mlp:
-    hidden_layer_sizes: [100, 50]
-    max_iter: 500
+    hidden_layer_sizes: [100, 50] # Neurons per hidden layer
+    max_iter: 500 # Maximum training iterations
 
   random_forest:
-    n_estimators: 100
-    max_depth: null
-    min_samples_split: 2
-    min_samples_leaf: 1
+    n_estimators: 100 # Number of decision trees
+    max_depth: null # No depth restriction (fully grown trees)
+    min_samples_split: 2 # Minimum samples required to split a node
+    min_samples_leaf: 1 # Minimum samples required to split a node
 
   lstm:
     sequence_length: 24
@@ -27,16 +27,11 @@ model:
     dropout_1: 0.3
     dropout_2: 0.3
 
-# Will utilise callbacks if time permits
 callbacks:
   early_stopping_patience: 10
   reduce_lr_patience: 5
   reduce_lr_factor: 0.5
   reduce_lr_min_lr: 0.000001
-
-# Will utilise CV if time permits
-evaluate:
-  cv_folds: 5
 
 monitor:
   ks_p_threshold: 0.05
