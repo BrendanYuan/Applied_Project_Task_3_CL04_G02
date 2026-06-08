@@ -44,7 +44,7 @@ def preprocess(df):
     y,
     test_size=params["data"]["test_size"],
     random_state=params["data"]["random_seed"],
-    shuffle=False
+    shuffle=True
     )
 
     scaler_X = StandardScaler()
