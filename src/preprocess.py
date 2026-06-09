@@ -39,32 +39,80 @@ def preprocess(df):
 
     y = df["Zone 1 Power Consumption"].values.reshape(-1, 1)
 
-    X_train, X_test, y_train, y_test = train_test_split(
-    X,
-    y,
-    test_size=params["data"]["test_size"],
-    random_state=params["data"]["random_seed"],
-    shuffle=True
+    # ==========================================
+    # Split 1 — RF and MLP (shuffled, 70/30)
+    # shuffle=True ensures train and test are drawn
+    # from the same overall distribution. These models
+    # treat each row independently so temporal order
+    # does not matter.
+    # ==========================================
+
+    X_train_flat, X_test_flat, y_train_flat, y_test_flat = train_test_split(
+        X, y,
+        test_size=0.30,
+        random_state=params["data"]["random_seed"],
+        shuffle=True
     )
 
-    scaler_X = StandardScaler()
-    scaler_y = StandardScaler()
+    scaler_X_flat = StandardScaler()
+    scaler_y_flat = StandardScaler()
 
-    X_train = scaler_X.fit_transform(X_train)
-    X_test = scaler_X.transform(X_test)
+    X_train_flat = scaler_X_flat.fit_transform(X_train_flat)
+    X_test_flat  = scaler_X_flat.transform(X_test_flat)
+    y_train_flat = scaler_y_flat.fit_transform(y_train_flat)
+    y_test_flat  = scaler_y_flat.transform(y_test_flat)
 
-    y_train = scaler_y.fit_transform(y_train)
-    y_test = scaler_y.transform(y_test)
+    np.save("artifacts/data/x_train_flat.npy", X_train_flat)
+    np.save("artifacts/data/x_test_flat.npy",  X_test_flat)
+    np.save("artifacts/data/y_train_flat.npy", y_train_flat)
+    np.save("artifacts/data/y_test_flat.npy",  y_test_flat)
 
-    np.save("artifacts/data/x_train.npy", X_train)
-    np.save("artifacts/data/x_test.npy", X_test)
-    np.save("artifacts/data/y_train.npy", y_train)
-    np.save("artifacts/data/y_test.npy", y_test)
+    with open("artifacts/scaler_X_flat.pkl", "wb") as f:
+        pickle.dump(scaler_X_flat, f)
+    with open("artifacts/scaler_y_flat.pkl", "wb") as f:
+        pickle.dump(scaler_y_flat, f)
 
-    with open("artifacts/scaler_X.pkl", "wb") as f:
-        pickle.dump(scaler_X, f)
-    with open("artifacts/scaler_y.pkl", "wb") as f:
-        pickle.dump(scaler_y, f)
+    print("Flat split (RF/MLP) saved.")
+    print(f"  X_train_flat : {X_train_flat.shape}")
+    print(f"  X_test_flat  : {X_test_flat.shape}")
+
+    # ==========================================
+    # Split 2 — LSTM (temporal order preserved, 70/30)
+    # shuffle=False keeps chronological order so that
+    # sequences built by create_sequences in model.py
+    # reflect real temporal dependencies. The 70/30
+    # ratio still gives the model a large enough training
+    # window to cover multiple seasons.
+    # ==========================================
+
+    X_train_seq, X_test_seq, y_train_seq, y_test_seq = train_test_split(
+        X, y,
+        test_size=0.30,
+        random_state=params["data"]["random_seed"],
+        shuffle=False
+    )
+ 
+    scaler_X_seq = StandardScaler()
+    scaler_y_seq = StandardScaler()
+ 
+    X_train_seq = scaler_X_seq.fit_transform(X_train_seq)
+    X_test_seq  = scaler_X_seq.transform(X_test_seq)
+    y_train_seq = scaler_y_seq.fit_transform(y_train_seq)
+    y_test_seq  = scaler_y_seq.transform(y_test_seq)
+ 
+    np.save("artifacts/data/x_train_seq.npy", X_train_seq)
+    np.save("artifacts/data/x_test_seq.npy",  X_test_seq)
+    np.save("artifacts/data/y_train_seq.npy", y_train_seq)
+    np.save("artifacts/data/y_test_seq.npy",  y_test_seq)
+ 
+    with open("artifacts/scaler_X_seq.pkl", "wb") as f:
+        pickle.dump(scaler_X_seq, f)
+    with open("artifacts/scaler_y_seq.pkl", "wb") as f:
+        pickle.dump(scaler_y_seq, f)
+ 
+    print("Sequential split (LSTM) saved.")
+    print(f"  X_train_seq  : {X_train_seq.shape}")
+    print(f"  X_test_seq   : {X_test_seq.shape}")
 
 df = load_data()
 preprocess(df)

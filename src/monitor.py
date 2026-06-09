@@ -31,18 +31,20 @@ baseline_rmse = best_model_info["rmse"]
 # Load correct data based on model type
 # ==========================================
 if best_model == "lstm":
-    X_train = np.load("artifacts/data/x_train_seq.npy")
-    X_test  = np.load("artifacts/data/x_test_seq.npy")
-    y_test  = np.load("artifacts/data/y_test_seq.npy")
+    X_train = np.load("artifacts/data/x_train_lstm.npy")
+    X_test  = np.load("artifacts/data/x_test_lstm.npy")
+    y_test  = np.load("artifacts/data/y_test_lstm.npy")
     model   = load_model("artifacts/models/lstm_model.keras")
+elif best_model == "mlp":
+    X_train = np.load("artifacts/data/x_train_flat.npy")
+    X_test  = np.load("artifacts/data/x_test_flat.npy")
+    y_test  = np.load("artifacts/data/y_test_flat.npy")
+    model   = pickle.load(open("artifacts/models/mlp_model.pkl", "rb"))
 else:
-    X_train = np.load("artifacts/data/x_train.npy")
-    X_test  = np.load("artifacts/data/x_test.npy")
-    y_test  = np.load("artifacts/data/y_test.npy")
-    if best_model == "mlp":
-        model = pickle.load(open("artifacts/models/mlp_model.pkl", "rb"))
-    else:
-        model = pickle.load(open("artifacts/models/rf_model.pkl", "rb"))
+    X_train = np.load("artifacts/data/x_train_flat.npy")
+    X_test  = np.load("artifacts/data/x_test_flat.npy")
+    y_test  = np.load("artifacts/data/y_test_flat.npy")
+    model   = pickle.load(open("artifacts/models/rf_model.pkl", "rb"))
 
 # ==========================================
 # Predictions

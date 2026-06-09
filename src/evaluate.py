@@ -35,12 +35,14 @@ print("=" * 50)
 
 # ==========================================
 # Load data for all three models
+# RF and MLP use the shuffled flat split.
+# LSTM uses the temporally ordered lstm sequences.
 # ==========================================
-X_test_flat = np.load("artifacts/data/x_test.npy")
-y_test_flat = np.load("artifacts/data/y_test.npy").ravel()
-
-X_test_seq  = np.load("artifacts/data/x_test_seq.npy")
-y_test_seq  = np.load("artifacts/data/y_test_seq.npy").ravel()
+X_test_flat = np.load("artifacts/data/x_test_flat.npy")
+y_test_flat = np.load("artifacts/data/y_test_flat.npy").ravel()
+ 
+X_test_lstm = np.load("artifacts/data/x_test_lstm.npy")
+y_test_lstm = np.load("artifacts/data/y_test_lstm.npy").ravel()
 
 # ==========================================
 # Load all models
@@ -51,7 +53,7 @@ lstm = load_model("artifacts/models/lstm_model.keras")
 
 rf_preds   = rf.predict(X_test_flat)
 mlp_preds  = mlp.predict(X_test_flat)
-lstm_preds = lstm.predict(X_test_seq).ravel()
+lstm_preds = lstm.predict(X_test_lstm).ravel()
 
 # ==========================================
 # Plot helper
@@ -115,7 +117,7 @@ plot_actual_vs_predicted(
 )
 
 plot_actual_vs_predicted(
-    y_test_seq, lstm_preds,
+    y_test_lstm, lstm_preds,
     model_name="LSTM",
     r2=scores["lstm"]["r2"], rmse=scores["lstm"]["rmse"],
     filename="reports/plots/lstm_actual_vs_predicted.png"
@@ -132,7 +134,7 @@ fig.suptitle("Model Comparison — Actual vs Predicted (Scatter)", fontsize=13, 
 model_data = [
     ("Random Forest", y_test_flat, rf_preds,   "steelblue", "rf"),
     ("MLP",           y_test_flat, mlp_preds,  "seagreen",  "mlp"),
-    ("LSTM",          y_test_seq,  lstm_preds, "darkorange","lstm"),
+    ("LSTM",          y_test_lstm,  lstm_preds, "darkorange","lstm"),
 ]
 
 for ax, (name, y_true, y_pred, color, key) in zip(axes, model_data):

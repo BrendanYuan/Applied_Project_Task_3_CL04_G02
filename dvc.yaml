@@ -6,20 +6,28 @@ stages:
       - src/preprocess.py
       - data/raw/power_consumption_tetuan_city.csv
     outs:
-      - artifacts/data/x_train.npy
-      - artifacts/data/x_test.npy
-      - artifacts/data/y_train.npy
-      - artifacts/data/y_test.npy
+      - artifacts/data/x_train_flat.npy
+      - artifacts/data/x_test_flat.npy
+      - artifacts/data/y_train_flat.npy
+      - artifacts/data/y_test_flat.npy
+      - artifacts/data/x_train_seq.npy
+      - artifacts/data/x_test_seq.npy
+      - artifacts/data/y_train_seq.npy
+      - artifacts/data/y_test_seq.npy
 
   model:
     cmd: python src/model.py
     deps:
       - src/model.py
       - params.yaml
-      - artifacts/data/x_train.npy
-      - artifacts/data/x_test.npy
-      - artifacts/data/y_train.npy
-      - artifacts/data/y_test.npy
+      - artifacts/data/x_train_flat.npy
+      - artifacts/data/x_test_flat.npy
+      - artifacts/data/y_train_flat.npy
+      - artifacts/data/y_test_flat.npy
+      - artifacts/data/x_train_seq.npy
+      - artifacts/data/x_test_seq.npy
+      - artifacts/data/y_train_seq.npy
+      - artifacts/data/y_test_seq.npy
     params:
       - data.random_seed
       - data.test_size
@@ -36,10 +44,10 @@ stages:
       - artifacts/models/lstm_model.keras
       - artifacts/metrics/model_scores.json
       - artifacts/training_history.json
-      - artifacts/data/x_train_seq.npy
-      - artifacts/data/x_test_seq.npy
-      - artifacts/data/y_train_seq.npy
-      - artifacts/data/y_test_seq.npy
+      - artifacts/data/x_train_lstm.npy
+      - artifacts/data/x_test_lstm.npy
+      - artifacts/data/y_train_lstm.npy
+      - artifacts/data/y_test_lstm.npy
 
   evaluate:
     cmd: python src/evaluate.py
@@ -49,10 +57,10 @@ stages:
       - artifacts/models/rf_model.pkl
       - artifacts/models/mlp_model.pkl
       - artifacts/models/lstm_model.keras
-      - artifacts/data/x_test.npy
-      - artifacts/data/y_test.npy
-      - artifacts/data/x_test_seq.npy
-      - artifacts/data/y_test_seq.npy
+      - artifacts/data/x_test_flat.npy
+      - artifacts/data/y_test_flat.npy
+      - artifacts/data/x_test_lstm.npy
+      - artifacts/data/y_test_lstm.npy
     outs:
       - artifacts/metrics/best_model.json
       - reports/plots
@@ -66,12 +74,12 @@ stages:
       - artifacts/models/rf_model.pkl
       - artifacts/models/mlp_model.pkl
       - artifacts/models/lstm_model.keras
-      - artifacts/data/x_train.npy
-      - artifacts/data/x_test.npy
-      - artifacts/data/y_test.npy
-      - artifacts/data/x_train_seq.npy
-      - artifacts/data/x_test_seq.npy
-      - artifacts/data/y_test_seq.npy
+      - artifacts/data/x_train_flat.npy
+      - artifacts/data/x_test_flat.npy
+      - artifacts/data/y_test_flat.npy
+      - artifacts/data/x_train_lstm.npy
+      - artifacts/data/x_test_lstm.npy
+      - artifacts/data/y_test_lstm.npy
     params:
       - monitor
     outs:

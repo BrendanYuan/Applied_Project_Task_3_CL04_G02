@@ -17,16 +17,27 @@ os.makedirs("artifacts/models", exist_ok=True)
 os.makedirs("artifacts/metrics", exist_ok=True)
 os.makedirs("artifacts/data", exist_ok=True)
 
-# ==========================================
-# Load config + data
-# ==========================================
 with open("params.yaml") as f:
     params = yaml.safe_load(f)
 
-X_train = np.load("artifacts/data/x_train.npy")
-X_test  = np.load("artifacts/data/x_test.npy")
-y_train = np.load("artifacts/data/y_train.npy")
-y_test  = np.load("artifacts/data/y_test.npy")
+# ==========================================
+# Load flat split — RF and MLP
+# ==========================================
+
+X_train_flat = np.load("artifacts/data/x_train_flat.npy")
+X_test_flat  = np.load("artifacts/data/x_test_flat.npy")
+y_train_flat = np.load("artifacts/data/y_train_flat.npy")
+y_test_flat  = np.load("artifacts/data/y_test_flat.npy")
+
+# ==========================================
+# Load sequential split — LSTM raw arrays
+# create_sequences is applied below
+# ==========================================
+
+X_train_seq_raw = np.load("artifacts/data/x_train_seq.npy")
+X_test_seq_raw  = np.load("artifacts/data/x_test_seq.npy")
+y_train_seq_raw = np.load("artifacts/data/y_train_seq.npy")
+y_test_seq_raw  = np.load("artifacts/data/y_test_seq.npy")
 
 results = {}
 
@@ -47,12 +58,12 @@ rf = RandomForestRegressor(
     random_state=params["data"]["random_seed"]
 )
 
-rf.fit(X_train, y_train.ravel())
-rf_preds = rf.predict(X_test)
+rf.fit(X_train_flat, y_train_flat.ravel())
+rf_preds = rf.predict(X_test_flat)
 
 results["rf"] = {
-    "r2":   float(r2_score(y_test, rf_preds)),
-    "rmse": float(np.sqrt(mean_squared_error(y_test, rf_preds)))
+    "r2":   float(r2_score(y_test_flat, rf_preds)),
+    "rmse": float(np.sqrt(mean_squared_error(y_test_flat, rf_preds)))
 }
 
 pickle.dump(rf, open("artifacts/models/rf_model.pkl", "wb"))
@@ -73,12 +84,12 @@ mlp = MLPRegressor(
     random_state=params["data"]["random_seed"]
 )
 
-mlp.fit(X_train, y_train.ravel())
-mlp_preds = mlp.predict(X_test)
+mlp.fit(X_train_flat, y_train_flat.ravel())
+mlp_preds = mlp.predict(X_test_flat)
 
 results["mlp"] = {
-    "r2":   float(r2_score(y_test, mlp_preds)),
-    "rmse": float(np.sqrt(mean_squared_error(y_test, mlp_preds)))
+    "r2":   float(r2_score(y_test_flat, mlp_preds)),
+    "rmse": float(np.sqrt(mean_squared_error(y_test_flat, mlp_preds)))
 }
 
 pickle.dump(mlp, open("artifacts/models/mlp_model.pkl", "wb"))
@@ -102,13 +113,14 @@ def create_sequences(X, y, seq_len):
         ys.append(y[i + seq_len])
     return np.array(Xs), np.array(ys)
 
-X_train_seq, y_train_seq = create_sequences(X_train, y_train, SEQ_LEN)
-X_test_seq,  y_test_seq  = create_sequences(X_test,  y_test,  SEQ_LEN)
+X_train_lstm, y_train_lstm = create_sequences(X_train_seq_raw, y_train_seq_raw, SEQ_LEN)
+X_test_lstm,  y_test_lstm  = create_sequences(X_test_seq_raw,  y_test_seq_raw,  SEQ_LEN)
 
-np.save("artifacts/data/x_train_seq.npy", X_train_seq)
-np.save("artifacts/data/x_test_seq.npy",  X_test_seq)
-np.save("artifacts/data/y_train_seq.npy", y_train_seq)
-np.save("artifacts/data/y_test_seq.npy",  y_test_seq)
+# Save final LSTM sequences for evaluate.py and monitor.py
+np.save("artifacts/data/x_train_lstm.npy", X_train_lstm)
+np.save("artifacts/data/x_test_lstm.npy",  X_test_lstm)
+np.save("artifacts/data/y_train_lstm.npy", y_train_lstm)
+np.save("artifacts/data/y_test_lstm.npy",  y_test_lstm)
 
 # ---- Improved LSTM architecture ----
 # BatchNormalization stabilises training between LSTM blocks
@@ -119,7 +131,7 @@ np.save("artifacts/data/y_test_seq.npy",  y_test_seq)
 
 lstm_model = Sequential([
     LSTM(lstm_p["units_1"], return_sequences=True,
-         input_shape=(SEQ_LEN, X_train.shape[1])),
+         input_shape=(SEQ_LEN, X_train_seq_raw.shape[1])),
     Dropout(lstm_p["dropout_1"]),
     BatchNormalization(),
 
@@ -155,7 +167,7 @@ callbacks = [
 ]
 
 history = lstm_model.fit(
-    X_train_seq, y_train_seq,
+    X_train_lstm, y_train_lstm,
     epochs=params["model"]["epochs"],
     batch_size=params["model"]["batch_size"],
     validation_split=0.1,
@@ -163,11 +175,11 @@ history = lstm_model.fit(
     verbose=1
 )
 
-lstm_preds = lstm_model.predict(X_test_seq)
+lstm_preds = lstm_model.predict(X_test_lstm)
 
 results["lstm"] = {
-    "r2":   float(r2_score(y_test_seq, lstm_preds)),
-    "rmse": float(np.sqrt(mean_squared_error(y_test_seq, lstm_preds)))
+    "r2":   float(r2_score(y_test_lstm, lstm_preds)),
+    "rmse": float(np.sqrt(mean_squared_error(y_test_lstm, lstm_preds)))
 }
 
 lstm_model.save("artifacts/models/lstm_model.keras")
