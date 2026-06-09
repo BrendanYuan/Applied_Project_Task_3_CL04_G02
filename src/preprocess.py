@@ -87,7 +87,7 @@ def preprocess(df):
 
     X_train_seq, X_test_seq, y_train_seq, y_test_seq = train_test_split(
         X, y,
-        test_size=0.30,
+        test_size=0.10,
         random_state=params["data"]["random_seed"],
         shuffle=False
     )
